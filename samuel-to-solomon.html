@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Samuel to Solomon · An Interactive Atlas</title>
+<style>
+/* PAGE APPEARANCE: edit colors, sizes, and layout below. */
+:root{--ink:#17221d;--paper:#f3ead2;--deep:#173b34;--gold:#c3913d;--red:#9d392d;--blue:#315f83}*{box-sizing:border-box}body{margin:0;background:#0d211d;color:var(--ink);font-family:Georgia,serif}.shell{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(circle at 15% 5%,#31564a,#10241f 58%)}header{padding:17px clamp(16px,4vw,50px) 12px;color:#f8f0db;display:flex;justify-content:space-between;align-items:end;gap:20px}.kicker,.progress{font:800 .76rem system-ui,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#d9b665}h1{margin:6px 0 0;font-size:clamp(1.55rem,3vw,2.55rem);font-weight:500}.main{margin:0 clamp(8px,3vw,34px);display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.72fr);border:1px solid #806b43;box-shadow:0 22px 65px #0008;min-height:690px}.mapwrap{position:relative;overflow:hidden;background:#c7af78}.mapwrap:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 110px #38241399}.mapwrap svg{display:block;width:100%;height:100%;min-height:690px}.land{fill:url(#land)}.sea{fill:url(#sea)}.coast{fill:none;stroke:#2b6268;stroke-width:4}.ridge{fill:none;stroke:#725d37;stroke-width:2;opacity:.35;stroke-dasharray:4 8}.river{fill:none;stroke:#568f98;stroke-width:6}.water{font:italic 15px Georgia,serif;fill:#174b56;letter-spacing:.08em}.place text,.region{font:800 13px system-ui,sans-serif;paint-order:stroke;stroke:#f2e4bc;stroke-width:4;stroke-linejoin:round;fill:#17221d}.place circle{fill:#9d392d;stroke:#fff0c8;stroke-width:2.5}.place.base circle{fill:#173b34}.place.trade circle{fill:#b98232}.route{fill:none;stroke:#9d392d;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:10 8;marker-end:url(#arrow)}.route.blue{stroke:#315f83;marker-end:url(#arrowBlue)}.route.gold{stroke:#b98232;marker-end:url(#arrowGold)}.zone{fill:#9d392d44;stroke:#8e3028;stroke-width:2.5;stroke-dasharray:8 6}.realm{fill:#c3913d4d;stroke:#8b672c;stroke-width:3}.core{fill:#35695877;stroke:#173b34;stroke-width:3}.region{font-size:14px;letter-spacing:.08em;stroke-width:3}.panel{background:var(--paper);padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;border-left:1px solid #806b43}.chapter{font:800 .78rem system-ui,sans-serif;color:var(--red);letter-spacing:.14em;text-transform:uppercase}.panel h2{font-size:clamp(2rem,3vw,2.85rem);line-height:1;margin:10px 0 15px;color:#1b332c}.summary{font-size:1.05rem;line-height:1.55;margin:0 0 20px}.facts{border-top:1px solid #b9a77c;padding-top:15px}.facts h3{font:800 .76rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:#695334}.facts ul{padding-left:18px;line-height:1.5;margin:0}.facts li+li{margin-top:8px}.note{margin-top:auto;padding-top:18px;font:.82rem/1.45 system-ui,sans-serif;color:#665b48}.controls{display:flex;gap:10px;margin-top:16px}.nav{min-height:48px;flex:1;background:#173b34;border:1px solid #40574f;color:white;font:800 .9rem system-ui,sans-serif;cursor:pointer}.nav:disabled{opacity:.35}.dots{display:flex;justify-content:center;gap:9px;padding:13px}.dot{width:11px;height:11px;border:1px solid #d8caa5;border-radius:50%;background:transparent;cursor:pointer}.dot.active{background:#d9b665}.legend{position:absolute;left:16px;bottom:16px;background:#f3ead2e8;border:1px solid #806b43;padding:9px 12px;font:700 .75rem system-ui,sans-serif;z-index:2}footer{color:#bfb6a1;padding:10px clamp(18px,4vw,50px) 16px;font:12px/1.5 system-ui,sans-serif}@media(max-width:850px){.main{grid-template-columns:1fr}.mapwrap svg{min-height:560px}.panel{border-left:0;border-top:1px solid #806b43}.note{margin-top:18px}}@media(max-width:520px){header{display:block}.progress{margin-top:8px}.main{margin:0}.mapwrap svg{min-height:480px}.panel{padding:22px 18px}}
+
+/* EDIT THIS BLOCK to change the navigation shared by the atlas pages. */
+.collection-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 14px;
+  background: #0a1714;
+  border-bottom: 1px solid #806b43;
+  font: 700 14px system-ui, sans-serif;
+}
+.collection-nav a {
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid #62786f;
+  background: #1d3b34;
+  padding: 8px 12px;
+}
+.collection-nav a:hover,
+.collection-nav a:focus { background: #31564c; }
+
+</style>
+</head>
+<body>
+<nav class="collection-nav" aria-label="Biblical atlas navigation">
+<a href="index.html">All maps</a>
+<a href="joshua.html">Joshua</a>
+<a href="judges.html">Judges</a>
+<a href="samuel-to-solomon.html">Samuel–Solomon</a>
+</nav>
+<div class="shell">
+<header>
+<div>
+<div class="kicker">The United Monarchy · An Interactive Atlas</div>
+<h1>From Samuel to Solomon</h1>
+</div>
+<div class="progress" id="progress">
+</div>
+</header>
+<main class="main">
+<section class="mapwrap">
+<!-- MAP ARTWORK AND BASE GEOGRAPHY -->
+<svg id="map" viewBox="0 0 900 720" role="img" aria-labelledby="title desc">
+<title id="title">Israel from Samuel to Solomon</title>
+<desc id="desc">An interactive map of Samuel's circuit, Saul's wars, David's victories, and Solomon's realm and international connections.</desc>
+<defs>
+<linearGradient id="land" x1="0" y1="0" x2="1" y2="1">
+<stop stop-color="#eadcaf"/>
+<stop offset=".55" stop-color="#ccb275"/>
+<stop offset="1" stop-color="#9f7b47"/>
+</linearGradient>
+<linearGradient id="sea" x1="0" y1="0" x2="1" y2="1">
+<stop stop-color="#73a5a9"/>
+<stop offset="1" stop-color="#285d68"/>
+</linearGradient>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto">
+<path d="M0 0L10 5L0 10Z" fill="#9d392d"/>
+</marker>
+<marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto">
+<path d="M0 0L10 5L0 10Z" fill="#315f83"/>
+</marker>
+<marker id="arrowGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto">
+<path d="M0 0L10 5L0 10Z" fill="#b98232"/>
+</marker>
+</defs>
+<rect class="land" width="900" height="720"/>
+<path class="sea" d="M0 0H170C160 110 145 230 150 350C155 470 120 600 95 720H0Z"/>
+<path class="coast" d="M170 0C160 110 145 230 150 350C155 470 120 600 95 720"/>
+<ellipse class="sea" cx="492" cy="175" rx="35" ry="58"/>
+<path class="river" d="M492 232C483 300 507 365 490 445"/>
+<path class="sea" d="M464 445Q492 426 523 448L545 565Q500 598 462 565Z"/>
+<path class="ridge" d="M365 35C320 160 370 250 330 360S335 560 270 690M555 25C520 145 570 260 545 380S575 580 620 700"/>
+<text class="water" x="40" y="340">Great Sea</text>
+<text class="water" x="492" y="179" text-anchor="middle">Chinneroth</text>
+<text class="water" x="500" y="515" text-anchor="middle">Salt Sea</text>
+<g id="zones">
+</g>
+<g id="routes">
+</g>
+<g id="labels">
+</g>
+<g id="places">
+</g>
+</svg>
+<div class="legend" id="legend">
+</div>
+</section>
+<aside class="panel">
+<div class="chapter" id="chapter">
+</div>
+<h2 id="heading">
+</h2>
+<p class="summary" id="summary">
+</p>
+<div class="facts">
+<h3>People, places &amp; movements</h3>
+<ul id="facts">
+</ul>
+</div>
+<p class="note" id="note">
+</p>
+<div class="controls">
+<button class="nav" id="back">← Back</button>
+<button class="nav" id="next">Next →</button>
+</div>
+</aside>
+</main>
+<div class="dots" id="dots">
+</div>
+<footer>Borders and routes are approximate teaching aids. A campaign, tribute relationship, and direct administration are not treated as the same thing.</footer>
+</div>
+<script>
+/* PLACE COORDINATES: horizontal and vertical */
+const P= {
+  Jerusalem:[360,
+  435],
+  Shiloh:[382,
+  345],
+  Bethel:[370,
+  390],
+  Gilgal:[440,
+  420],
+  Mizpah:[350,
+  405],
+  Ramah:[345,
+  390],
+  Gibeah:[365,
+  410],
+  JabeshGilead:[535,
+  340],
+  Michmash:[392,
+  398],
+  Gilboa:[410,
+  300],
+  Gath:[235,
+  470],
+  Philistia:[185,
+  500],
+  Moab:[610,
+  535],
+  Ammon:[650,
+  400],
+  Edom:[560,
+  670],
+  Amalek:[330,
+  690],
+  Zobah:[690,
+  105],
+  Damascus:[625,
+  105],
+  Hamath:[590,
+  25],
+  Tyre:[235,
+  95],
+  Euphrates:[820,
+  55],
+  Egypt:[130,
+  690],
+  EzionGeber:[500,
+  710],
+  Sheba:[790,
+  705],
+  Ophir:[820,
+  610],
+  Tarshish:[30,
+  120]
+};
+/* STAGE CONTENT: edit headings,
+summaries,
+facts,
+markers and routes here. */
+const stages=[
+ {
+  ch:'1 Samuel 1–7',
+  title:'The Days of Samuel',
+  summary:'Samuel’s ministry begins at Shiloh and later centers on the hill country. Each year he judges Israel on a circuit through Bethel, Gilgal, and Mizpah, then returns to his home at Ramah.',
+  facts:['<strong>Three circuit cities:</strong> Bethel, Gilgal, and Mizpah (1 Samuel 7:16).',
+  '<strong>Ramah:</strong> Samuel’s home, regular seat of judgment, and the place where he built an altar (7:17).',
+  '<strong>Shiloh:</strong> the sanctuary where Samuel was raised under Eli and first received the word of the Lord (1 Samuel 1–3).',
+  '<strong>Mizpah:</strong> Israel gathers there in repentance; the Lord defeats the attacking Philistines (1 Samuel 7).',
+  '<strong>Jerusalem:</strong> shown for orientation; it remained a Jebusite city until David captured it.'],
+  note:'The precise identification of Ramah and the relationship of the several places called Gilgal are discussed by historical geographers.',
+  marks:[['Shiloh',
+  'base'],
+  ['Bethel',
+  'base'],
+  ['Gilgal',
+  'base'],
+  ['Mizpah',
+  'base'],
+  ['Ramah',
+  'base'],
+  ['Jerusalem',
+  '']],
+  route:['Ramah',
+  'Bethel',
+  'Gilgal',
+  'Mizpah',
+  'Ramah'],
+  legend:'Samuel’s annual circuit'
+},
+ {
+  ch:'1 Samuel 9–31',
+  title:'Saul and Enemies on Every Side',
+  summary:'Saul establishes Israel’s first monarchy amid continuing pressure. First Samuel 14 summarizes enemies in every direction: Philistia, Moab, Ammon, Edom, Zobah, and Amalek.',
+  facts:['<strong>Philistines:</strong> the most persistent western threat; key fighting occurs around Michmash and finally Mount Gilboa.',
+  '<strong>Ammonites:</strong> Nahash besieges Jabesh-gilead, prompting Saul’s first great deliverance (1 Samuel 11).',
+  '<strong>Moab, Edom, and Zobah:</strong> named among Saul’s wars after he assumes the kingship (14:47).',
+  '<strong>Amalek:</strong> Saul strikes the Amalekites but disobeys the Lord’s command concerning the ban and King Agag (chapter 15).',
+  'The arrows show directions of hostile pressure, not one simultaneous invasion or permanent occupation.'],
+  note:'First Samuel gives detailed geography for some Philistine and Ammonite episodes but only a summary notice for Saul’s wars with Moab, Edom, and Zobah.',
+  marks:[['Gibeah',
+  'base'],
+  ['Michmash',
+  ''],
+  ['JabeshGilead',
+  ''],
+  ['Gilboa',
+  ''],
+  ['Jerusalem',
+  '']],
+  invasions:[['Philistia',
+  'Gibeah'],
+  ['Moab',
+  'Gibeah'],
+  ['Ammon',
+  'JabeshGilead'],
+  ['Edom',
+  'Gibeah'],
+  ['Zobah',
+  'Gibeah'],
+  ['Amalek',
+  'Gibeah']],
+  labels:[['PHILISTINES',
+  155,
+  545],
+  ['MOAB',
+  620,
+  560],
+  ['AMMON',
+  665,
+  425],
+  ['EDOM',
+  565,
+  695],
+  ['AMALEK',
+  300,
+  705],
+  ['ZOBAH',
+  700,
+  92]],
+  legend:'Arrows = hostile pressure or campaign direction'
+},
+ {
+  ch:'2 Samuel 8 · 1 Chronicles 18',
+  title:'David Expands Israel’s Rule',
+  summary:'From Jerusalem, David subdues Israel’s surrounding enemies, establishes garrisons, and receives tribute. The victories secure Israel from Philistia to the Euphrates corridor.',
+  facts:['<strong>Philistia:</strong> David subdues the Philistines; Chronicles names Gath and its villages.',
+  '<strong>Moab:</strong> subdued and made tributary.',
+  '<strong>Zobah:</strong> Hadadezer is defeated as he moves to restore his power at the Euphrates.',
+  '<strong>Aram-Damascus:</strong> Syrians coming to help Zobah are defeated; David places garrisons in Damascus.',
+  '<strong>Hamath:</strong> King Toi sends his son with gifts after hearing of Hadadezer’s defeat—shown as tribute/diplomacy, not conquest.',
+  '<strong>Edom:</strong> David stations garrisons there; the chapter summarizes victories over Edom, Moab, Ammon, Philistia, Amalek, and Zobah, though Ammon’s full war is narrated later.'],
+  note:'The red arrows mark the victories narrated in these parallel chapters. The gold Hamath arrow represents gifts and diplomatic submission, not a captured city.',
+  marks:[['Jerusalem',
+  'base'],
+  ['Gath',
+  ''],
+  ['Moab',
+  ''],
+  ['Edom',
+  ''],
+  ['Zobah',
+  ''],
+  ['Damascus',
+  ''],
+  ['Hamath',
+  'trade']],
+  outward:[['Jerusalem',
+  'Gath',
+  'red'],
+  ['Jerusalem',
+  'Moab',
+  'red'],
+  ['Jerusalem',
+  'Edom',
+  'red'],
+  ['Jerusalem',
+  'Zobah',
+  'red'],
+  ['Zobah',
+  'Damascus',
+  'red'],
+  ['Hamath',
+  'Jerusalem',
+  'gold']],
+  labels:[['PHILISTIA',
+  150,
+  520],
+  ['MOAB',
+  615,
+  558],
+  ['EDOM',
+  560,
+  696],
+  ['ARAM-DAMASCUS',
+  610,
+  88],
+  ['ZOBAH',
+  700,
+  125]],
+  legend:'Red = subdued · Gold = tribute or gifts'
+},
+ {
+  ch:'1 Kings 4; 9–10 · 2 Chronicles 8–9',
+  title:'Solomon’s Realm and International Reach',
+  summary:'Solomon rules a tributary realm from the Euphrates toward Philistia and Egypt’s border. Jerusalem becomes a center of wisdom, tribute, diplomacy, and long-distance trade by land and sea.',
+  facts:['<strong>Extent:</strong> 1 Kings 4:21 describes rule over kingdoms from the Euphrates to Philistia and Egypt’s border; this includes tributary influence beyond Israel’s directly administered heartland.',
+  '<strong>Queen of Sheba:</strong> travels north with a great caravan of spices, gold, and precious stones to hear Solomon’s wisdom in Jerusalem.',
+  '<strong>Tyre:</strong> Hiram supplies cedar and skilled labor and partners with Solomon’s fleet.',
+  '<strong>Ophir:</strong> ships sailing from Ezion-geber bring gold; its exact location remains uncertain.',
+  '<strong>Egypt and Kue:</strong> royal agents import horses and chariots, then export them to Hittite and Syrian kings.',
+  '<strong>Tarshish fleet:</strong> a fleet designation or destination associated with gold, silver, ivory, apes, and peacocks; its precise route is debated.'],
+  note:'The broad gold field represents Solomon’s tributary sphere as the biblical text describes it, not a modern surveyed border. Maritime routes and Ophir/Tarshish locations are especially uncertain.',
+  marks:[['Jerusalem',
+  'base'],
+  ['Tyre',
+  'trade'],
+  ['Euphrates',
+  'trade'],
+  ['Egypt',
+  'trade'],
+  ['EzionGeber',
+  'trade'],
+  ['Sheba',
+  'trade'],
+  ['Ophir',
+  'trade'],
+  ['Tarshish',
+  'trade']],
+  zones:'solomon',
+  outward:[['Sheba',
+  'Jerusalem',
+  'gold'],
+  ['Tyre',
+  'Jerusalem',
+  'gold'],
+  ['Egypt',
+  'Jerusalem',
+  'gold'],
+  ['EzionGeber',
+  'Ophir',
+  'blue'],
+  ['EzionGeber',
+  'Tarshish',
+  'blue']],
+  labels:[['TRIBUTARY REALM',
+  555,
+  260],
+  ['ISRAEL & JUDAH',
+  315,
+  360]],
+  legend:'Gold = land diplomacy/trade · Blue = maritime trade'
+}];
+const $=s=>document.querySelector(s),
+ns='http://www.w3.org/2000/svg';
+let i=0;
+function el(t,
+a,
+p) {
+  const e=document.createElementNS(ns,
+  t);
+  Object.entries(a|| {
+    
+  }).forEach(([k,
+  v])=>e.setAttribute(k,
+  v));
+  p.appendChild(e);
+  return e
+}function line(a,
+b,
+c='red') {
+  const [x1,
+  y1]=P[a],
+  [tx,
+  ty]=P[b],
+  dx=tx-x1,
+  dy=ty-y1,
+  len=Math.hypot(dx,
+  dy)||1,
+  x2=tx-dx/len*13,
+  y2=ty-dy/len*13;
+  el('path',
+   {
+    d:`M${x1} ${y1} Q${(x1+x2)/2} ${(y1+y2)/2-28} ${x2} ${y2}`,
+    class:'route '+(c==='blue'?'blue':c==='gold'?'gold':'')
+  },
+  $('#routes'))
+}function render() {
+  const s=stages[i];
+  ['zones',
+  'routes',
+  'labels',
+  'places'].forEach(x=>$('#'+x).innerHTML='');
+  if(s.zones) {
+    el('path',
+     {
+      d:'M190 105 L815 45 L690 330 L650 610 L515 650 L300 625 L145 510 L185 250 Z', class:'realm'
+    },
+    $('#zones'));
+    el('path',
+     {
+      d:'M245 210 L500 160 L545 560 L300 625 L145 510 L175 300 Z', class:'core'
+    },
+    $('#zones'))
+  }(s.route?[s.route]:[]).forEach(r=> {
+    for(let j=0;
+    j<r.length-1;
+    j++)line(r[j],
+    r[j+1],
+    'blue')
+  });
+  (s.invasions||[]).forEach(([a,
+  b])=>line(a,
+  b));
+  (s.outward||[]).forEach(([a,
+  b,
+  c])=>line(a,
+  b,
+  c));
+  (s.labels||[]).forEach(([t,
+  x,
+  y])=> {
+    const q=el('text',
+     {
+      x, y, class:'region'
+    },
+    $('#labels'));
+    q.textContent=t
+  });
+  (s.marks||[]).forEach(([n,
+  c])=> {
+    const [x,
+    y]=P[n],
+    g=el('g',
+     {
+      class:'place '+c
+    },
+    $('#places'));
+    el('circle',
+     {
+      cx:x, cy:y, r:7
+    },
+    g);
+    const q=el('text',
+     {
+      x:x+11, y:y+5
+    },
+    g);
+    q.textContent=n.replace(/([a-z])([A-Z])/g,
+    '$1-$2')
+  });
+  $('#chapter').textContent=s.ch;
+  $('#heading').textContent=s.title;
+  $('#summary').textContent=s.summary;
+  $('#facts').innerHTML=s.facts.map(x=>'<li>'+x+'</li>').join('');
+  $('#note').textContent=s.note;
+  $('#legend').textContent=s.legend;
+  $('#progress').textContent=`Stage ${i+1} of ${stages.length}`;
+  $('#back').disabled=i===0;
+  $('#next').textContent=i===stages.length-1?'Start over ↻':'Next →';
+  document.querySelectorAll('.dot').forEach((d,
+  j)=>d.classList.toggle('active',
+  i===j))
+}stages.forEach((_,
+j)=> {
+  const b=document.createElement('button');
+  b.className='dot';
+  b.ariaLabel=`Go to stage ${j+1}`;
+  b.onclick=()=> {
+    i=j;
+    render()
+  };
+  $('#dots').appendChild(b)
+});
+$('#back').onclick=()=> {
+  if(i) {
+    i--;
+    render()
+  }
+};
+$('#next').onclick=()=> {
+  i=(i+1)%stages.length;
+  render()
+};
+document.addEventListener('keydown',
+e=> {
+  if(e.key==='ArrowRight')$('#next').click();
+  if(e.key==='ArrowLeft')$('#back').click()
+});
+render();
+</script>
+</body></html>

@@ -1,0 +1,930 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Joshua: The Conquest of Canaan</title>
+<meta name="description" content="An interactive, chapter-by-chapter map of Joshua 1–19, from conquest to tribal allotments.">
+<style>
+/* PAGE APPEARANCE: edit colors, sizes, and layout below. */
+    :root{--ink:#182118;--paper:#f3ead2;--deep:#203b35;--gold:#b98232;--red:#9d392d;--blue:#7aa5ae;--line:#604d32}
+    *{box-sizing:border-box} body{margin:0;background:#12231f;color:var(--ink);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+    button{font:inherit}.shell{min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;background:radial-gradient(circle at 20% 10%,#2b4a40 0,#12231f 55%)}
+    header{color:#f7efd9;padding:18px clamp(18px,4vw,54px) 12px;display:flex;align-items:end;justify-content:space-between;gap:20px}
+    h1{font-size:clamp(1.45rem,3vw,2.5rem);margin:0;font-weight:600;letter-spacing:.02em}.kicker{font:700 .75rem/1.2 system-ui,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#dbb66d;margin-bottom:6px}
+    .progress{font:600 .85rem system-ui,sans-serif;color:#d8cfb9;white-space:nowrap}.main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(290px,.7fr);gap:0;margin:0 clamp(10px,3vw,36px);min-height:0;border:1px solid #735f3e;box-shadow:0 24px 70px #08120f99}
+    .map-wrap{position:relative;background:#bca36f;min-height:670px;overflow:hidden}.map-wrap:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(115deg,#fff4ce22 0 25%,transparent 42% 72%,#4d2e1640 100%);mix-blend-mode:soft-light}.map-wrap:after{content:"";pointer-events:none;position:absolute;inset:0;z-index:1;box-shadow:inset 0 0 125px #382413aa,inset 0 0 24px #fff0b833}
+    svg{display:block;width:100%;height:100%;min-height:670px}.land{fill:url(#landGradient)}.paper-grain{opacity:.24;mix-blend-mode:multiply}.sea{fill:url(#seaGradient);filter:url(#waterShadow)}.sea-lines{fill:none;stroke:#d2e0d0;stroke-width:1.2;opacity:.3}.coast-shadow{fill:none;stroke:#302d20;stroke-width:10;opacity:.18;filter:url(#softBlur)}.coast{fill:none;stroke:#335f61;stroke-width:3}.coast-highlight{fill:none;stroke:#d8e2c9;stroke-width:1;opacity:.75}.terrain{filter:url(#terrainShadow)}.highland{fill:url(#highlandGradient);opacity:.72}.foothill{fill:#b99e65;opacity:.38}.contour{fill:none;stroke:#6d5a36;stroke-width:1.3;opacity:.26}.ridge{fill:none;stroke:#6f5a35;stroke-width:2.3;opacity:.55;stroke-dasharray:3 8}.river{fill:none;stroke:#4e858d;stroke-width:7;filter:url(#waterShadow)}.river-shine{fill:none;stroke:#c2dbd6;stroke-width:1.7;opacity:.75}.route{fill:none;stroke:var(--red);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:10 8;filter:drop-shadow(0 2px 1px #fff0c0) drop-shadow(0 0 5px #7b241f66);animation:drawRoute 1.25s ease-out both}
+    .route.north{stroke:#234f78}.route.moses{stroke:#745083}.marker{animation:markIn .45s ease-out both}.marker circle{stroke:#fff4cf;stroke-width:2.5;filter:drop-shadow(0 2px 2px #28190d99)}.marker text{font:750 13px system-ui,sans-serif;paint-order:stroke;stroke:#f2e2b7;stroke-width:5px;stroke-linejoin:round;fill:#172018;filter:drop-shadow(0 1px #fff8e6)}.marker.city circle{fill:#a12f25}.marker.ally circle{fill:#bd7b20}.marker.summary circle{fill:#173f35}.marker.uncertain circle{stroke-dasharray:2 2}.region text{font:italic 700 16px Georgia,serif;fill:#513c20;opacity:.9;letter-spacing:.07em;paint-order:stroke;stroke:#dcc99b;stroke-width:2px}.water-label{font:italic 14px Georgia,serif;fill:#254e56;letter-spacing:.08em}.lake-label{fill:#173f49;paint-order:stroke;stroke:#c3d5cf;stroke-width:3px;stroke-linejoin:round}.geo-label{font:800 12px system-ui,sans-serif;fill:#634b27;letter-spacing:.11em;text-transform:uppercase;paint-order:stroke;stroke:#d7c494;stroke-width:2px}@keyframes drawRoute{from{stroke-dashoffset:220;opacity:0}to{stroke-dashoffset:0;opacity:1}}@keyframes markIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){.route,.marker{animation:none}}
+    .area{stroke:#862f28;stroke-width:2.5;stroke-dasharray:8 6;fill:#a83d3270}.territory{stroke:#f6e7bd;stroke-width:2;fill:var(--fill);fill-opacity:.66}.territory-label{font:800 12px system-ui,sans-serif;fill:#19231d;letter-spacing:.05em;text-anchor:middle;paint-order:stroke;stroke:#f3e4bb;stroke-width:3px;stroke-linejoin:round}.marker.unconquered circle{fill:#8f2e28}
+    .panel{background:var(--paper);padding:clamp(22px,3vw,38px);display:flex;flex-direction:column;border-left:1px solid #806c49;min-height:670px}.chapter{font:800 .78rem system-ui,sans-serif;color:var(--red);letter-spacing:.15em;text-transform:uppercase}.panel h2{font-size:clamp(1.8rem,3vw,2.7rem);line-height:1.02;margin:10px 0 14px;color:#1c302a}.summary{font-size:1.05rem;line-height:1.55;margin:0 0 20px}.facts{border-top:1px solid #b9a77c;padding-top:16px;margin-top:2px}.facts h3{font:800 .75rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.12em;margin:0 0 10px;color:#6a5434}.facts ul{padding-left:18px;margin:0;line-height:1.55}.facts li+li{margin-top:7px}.note{margin-top:auto;padding-top:20px;font:.78rem/1.45 system-ui,sans-serif;color:#665c48}.controls{display:flex;gap:10px;margin-top:18px}.nav{min-height:48px;border:1px solid #344a42;background:#203b35;color:white;padding:0 18px;cursor:pointer;flex:1;font:700 .9rem system-ui,sans-serif;letter-spacing:.03em}.nav:hover{background:#31564c}.nav:disabled{opacity:.38;cursor:not-allowed}.dots{display:flex;justify-content:center;gap:8px;padding:14px}.dot{width:10px;height:10px;border-radius:50%;border:1px solid #dacda9;background:transparent;padding:0;cursor:pointer}.dot.active{background:#dbb66d}.legend{position:absolute;left:18px;bottom:18px;background:#f5ead2e8;border:1px solid #8b7753;padding:10px 12px;font:700 .72rem system-ui,sans-serif;display:flex;gap:14px;z-index:2}.key{display:flex;align-items:center;gap:6px}.swatch{width:10px;height:10px;border-radius:50%;background:var(--red)}.swatch.gold{background:var(--gold)}.swatch.green{background:var(--deep)}
+    footer{color:#beb59e;font:12px/1.5 system-ui,sans-serif;padding:10px clamp(18px,4vw,54px) 16px;display:flex;justify-content:space-between;gap:18px}footer button{background:none;border:0;color:#e2c179;text-decoration:underline;cursor:pointer}.modal{position:fixed;inset:0;background:#07100dcc;z-index:5;display:none;place-items:center;padding:20px}.modal.open{display:grid}.modal-card{max-width:650px;background:#f5ecd7;padding:30px;box-shadow:0 20px 70px #000}.modal h2{margin-top:0}.modal p,.modal li{line-height:1.55}.close{float:right;border:0;background:#203b35;color:#fff;padding:9px 13px;cursor:pointer}
+    @media(max-width:820px){header{align-items:start}.main{grid-template-columns:1fr}.map-wrap,svg{min-height:500px}.panel{min-height:auto;border-left:0;border-top:1px solid #806c49}.legend{font-size:.65rem;gap:8px}.marker text{font-size:12px}footer{flex-direction:column}.progress{font-size:.75rem}}
+    @media(max-width:520px){header{display:block}.progress{margin-top:10px}.main{margin:0}.map-wrap,svg{min-height:440px}.panel{padding:22px 18px}.legend{left:8px;bottom:8px}.summary{font-size:1rem}}
+  
+/* EDIT THIS BLOCK to change the navigation shared by the atlas pages. */
+.collection-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 14px;
+  background: #0a1714;
+  border-bottom: 1px solid #806b43;
+  font: 700 14px system-ui, sans-serif;
+}
+.collection-nav a {
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid #62786f;
+  background: #1d3b34;
+  padding: 8px 12px;
+}
+.collection-nav a:hover,
+.collection-nav a:focus { background: #31564c; }
+
+</style>
+</head>
+<body>
+<nav class="collection-nav" aria-label="Biblical atlas navigation">
+<a href="index.html">All maps</a>
+<a href="joshua.html">Joshua</a>
+<a href="judges.html">Judges</a>
+<a href="samuel-to-solomon.html">Samuel–Solomon</a>
+</nav>
+<div class="shell">
+<header>
+<div>
+<div class="kicker">The Book of Joshua · An Interactive Atlas</div>
+<h1>Joshua: Conquest &amp; Inheritance</h1>
+</div>
+<div class="progress" id="progress">Stage 1 of 8</div>
+</header>
+<main class="main">
+<section class="map-wrap" aria-label="Map of Canaan">
+<!-- MAP ARTWORK AND BASE GEOGRAPHY -->
+<svg id="map" viewBox="0 0 760 720" role="img" aria-labelledby="mapTitle mapDesc">
+<title id="mapTitle">Canaan in the book of Joshua</title>
+<desc id="mapDesc">A stylized map of the locations, movements, unconquered regions, and tribal allotments in Joshua 1–19.</desc>
+<defs>
+<linearGradient id="landGradient" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#eadcaf"/>
+<stop offset=".47" stop-color="#cfb87e"/>
+<stop offset="1" stop-color="#aa8750"/>
+</linearGradient>
+<linearGradient id="seaGradient" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#6f9fa2"/>
+<stop offset=".55" stop-color="#477c83"/>
+<stop offset="1" stop-color="#285c67"/>
+</linearGradient>
+<radialGradient id="highlandGradient">
+<stop offset="0" stop-color="#7a6039"/>
+<stop offset=".55" stop-color="#a68851"/>
+<stop offset="1" stop-color="#c7af75" stop-opacity=".25"/>
+</radialGradient>
+<filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+<feTurbulence type="fractalNoise" baseFrequency=".68" numOctaves="3" seed="8"/>
+<feColorMatrix type="saturate" values="0"/>
+<feComponentTransfer>
+<feFuncA type="table" tableValues="0 .22"/>
+</feComponentTransfer>
+</filter>
+<filter id="terrainShadow" x="-20%" y="-20%" width="140%" height="140%">
+<feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+<feOffset dx="8" dy="10" result="offset"/>
+<feComponentTransfer in="offset" result="shade">
+<feFuncA type="linear" slope=".38"/>
+</feComponentTransfer>
+<feMerge>
+<feMergeNode in="shade"/>
+<feMergeNode in="SourceGraphic"/>
+</feMerge>
+</filter>
+<filter id="waterShadow" x="-30%" y="-30%" width="160%" height="160%">
+<feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#183f47" flood-opacity=".55"/>
+</filter>
+<filter id="softBlur">
+<feGaussianBlur stdDeviation="5"/>
+</filter>
+</defs>
+<rect class="land" width="760" height="720"/>
+<rect class="paper-grain" width="760" height="720" filter="url(#grain)"/>
+<path class="sea" d="M0 0H170C160 75 145 145 155 220C165 300 145 390 125 470C105 550 110 640 85 720H0Z"/>
+<path class="sea-lines" d="M18 100C65 86 105 97 150 82M5 210C55 196 100 205 150 190M0 335C48 320 92 330 140 315M0 470C42 454 80 468 116 450M0 605C35 590 70 600 100 580"/>
+<path class="coast-shadow" d="M170 0C160 75 145 145 155 220C165 300 145 390 125 470C105 550 110 640 85 720"/>
+<path class="coast" d="M170 0C160 75 145 145 155 220C165 300 145 390 125 470C105 550 110 640 85 720"/>
+<path class="coast-highlight" d="M164 0C154 75 139 145 149 220C159 300 139 390 119 470C99 550 104 640 79 720"/>
+<g class="terrain">
+<path class="highland" d="M325 20C285 112 303 190 330 244C354 292 310 340 300 400C286 482 312 558 275 690C330 675 390 635 402 560C413 488 378 430 405 355C428 292 410 220 385 165C365 121 385 65 420 20Z"/>
+<path class="highland" d="M515 15C492 98 525 180 540 250C554 316 534 380 565 445C592 502 562 590 598 705L700 720C675 635 682 560 650 490C616 416 626 348 604 280C580 207 595 117 570 18Z"/>
+<path class="foothill" d="M180 180C230 155 272 180 305 248C330 300 278 360 245 425C214 488 219 560 170 625C190 510 160 420 183 340C204 268 170 230 180 180Z"/>
+</g>
+<path class="contour" d="M342 55C320 130 333 205 357 260S325 380 326 445S340 575 300 650M365 52C345 135 360 200 380 255S350 365 348 430S371 540 330 620M535 60C526 145 550 210 563 282S554 405 588 475S580 610 620 675M570 75C560 150 579 220 587 290S580 400 610 468"/>
+<ellipse class="sea" cx="506" cy="175" rx="39" ry="61"/>
+<path class="river" d="M503 236C496 274 516 313 503 354C492 390 505 425 496 468"/>
+<path class="sea" d="M470 468Q500 447 530 469L550 583Q510 617 468 583Z"/>
+<path class="river-shine" d="M501 236C494 274 514 313 501 354C490 390 503 425 494 468"/>
+<path class="ridge" d="M380 55C340 170 365 270 330 370S310 570 285 680"/>
+<path class="ridge" d="M535 40C570 160 555 310 584 440S570 600 610 700"/>
+<text class="water-label" x="35" y="310" transform="rotate(-82 35 310)">Great Sea</text>
+<text class="water-label lake-label" x="506" y="180" text-anchor="middle">Chinneroth</text>
+<text class="water-label lake-label" x="510" y="532" text-anchor="middle">Salt Sea</text>
+<text class="geo-label" x="555" y="350">Transjordan</text>
+<text class="geo-label" x="260" y="690">Negeb</text>
+<g id="territories">
+</g>
+<g id="regions">
+</g>
+<g id="routes">
+</g>
+<g id="markers">
+</g>
+</svg>
+<div class="legend" id="legend">
+<span class="key">
+<i class="swatch">
+</i>Campaign</span>
+<span class="key">
+<i class="swatch gold">
+</i>Allied / treaty</span>
+<span class="key">
+<i class="swatch green">
+</i>Summary</span>
+</div>
+</section>
+<aside class="panel" aria-live="polite">
+<div class="chapter" id="chapter">
+</div>
+<h2 id="stageTitle">
+</h2>
+<p class="summary" id="summary">
+</p>
+<div class="facts">
+<h3 id="factsTitle">People & places</h3>
+<ul id="facts">
+</ul>
+</div>
+<p class="note" id="note">
+</p>
+<div class="controls">
+<button class="nav" id="back">← Back</button>
+<button class="nav" id="next">Next →</button>
+</div>
+</aside>
+</main>
+<div class="dots" id="dots" aria-label="Choose map stage">
+</div>
+<footer>
+<span>Locations are approximate; several ancient sites remain disputed. The map follows the narrative sequence rather than reconstructing every military movement.</span>
+<button id="sourcesBtn">Sources & method</button>
+</footer>
+</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="sourcesTitle">
+<div class="modal-card">
+<button class="close" id="close">Close</button>
+<h2 id="sourcesTitle">Sources & method</h2>
+<p>The plotted sequence and names follow Joshua 1–12. Geographic placement was cross-checked against BibleMapper’s campaign maps, BiblePlaces’ Joshua 12 town study, and standard historical-geography identifications. Dashed marker outlines indicate especially uncertain locations.</p>
+<ul>
+<li>Joshua 3:10: the seven peoples of Canaan</li>
+<li>Leviticus 18:21–30; Deuteronomy 12:29–31 and 18:9–12: sexual sin, divination and child sacrifice among the nations</li>
+<li>Numbers 13:29: Amalek in the Negeb and broad regional associations</li>
+<li>Deuteronomy 2:9, 19: Moab and Ammon were not Israel’s territorial targets</li>
+<li>Joshua 12:1–6: Sihon and Og east of the Jordan</li>
+<li>Joshua 15:8, 63: Jerusalem as the Jebusite city</li>
+<li>The Gospel Coalition: <em>Deuteronomy</em> course and TGC Bible Commentaries</li>
+<li>Bible.org / NET Bible: <em>Baalism in Canaanite Religion</em> and NET Bible study notes</li>
+<li>Ligonier Ministries: Reformed Bible studies on Baal and Asherah</li>
+<li>Associates for Biblical Research: archaeological articles on Canaanite religion</li>
+<li>BibleMapper and BiblePlaces: campaign and location cross-checks</li>
+</ul>
+<p>This is a teaching visualization, not a claim that every archaeological identification or every people’s distinct cult is certain.</p>
+</div>
+</div>
+
+<script>
+/* PLACE COORDINATES: horizontal and vertical */
+const P= {
+  Shittim:[570,
+  455],
+  Jordan:[500,
+  435],
+  Gilgal:[458,
+  425],
+  Jericho:[440,
+  442],
+  Ai:[397,
+  403],
+  Bethel:[384,
+  386],
+  Ebal:[382,
+  315],
+  Gerizim:[380,
+  332],
+  Gibeon:[348,
+  407],
+  Chephirah:[326,
+  405],
+  Beeroth:[354,
+  390],
+  KiriathJearim:[310,
+  420],
+  Jerusalem:[360,
+  444],
+  BethHoron:[325,
+  390],
+  Azekah:[285,
+  465],
+  Makkedah:[302,
+  480],
+  Libnah:[275,
+  505],
+  Lachish:[250,
+  535],
+  Gezer:[270,
+  430],
+  Eglon:[267,
+  555],
+  Hebron:[340,
+  545],
+  Debir:[330,
+  590],
+  Jarmuth:[293,
+  488],
+  Gaza:[190,
+  585],
+  Ashdod:[175,
+  515],
+  Ashkelon:[165,
+  558],
+  Gath:[225,
+  500],
+  Ekron:[220,
+  450],
+  Shihor:[112,
+  680],
+  Goshen:[315,
+  620],
+  Hazor:[480,
+  130],
+  Madon:[430,
+  190],
+  Shimron:[365,
+  210],
+  Achshaph:[295,
+  185],
+  Merom:[472,
+  102],
+  Sidon:[205,
+  55],
+  Mearah:[220,
+  88],
+  Gebal:[185,
+  18],
+  LeboHamath:[505,
+  18],
+  Misrephoth:[245,
+  120],
+  Dor:[210,
+  255],
+  Mizpah:[525,
+  80],
+  Hermon:[560,
+  42],
+  Kedesh:[455,
+  88],
+  Jokneam:[310,
+  250],
+  Megiddo:[335,
+  275],
+  Taanach:[350,
+  290],
+  Tappuah:[350,
+  345],
+  Hepher:[315,
+  315],
+  Aphek:[245,
+  360],
+  Lasharon:[300,
+  340],
+  Tirzah:[410,
+  305],
+  Geder:[310,
+  460],
+  Hormah:[315,
+  655],
+  Arad:[360,
+  650],
+  Adullam:[305,
+  520],
+  BaalGad:[520,
+  55],
+  Halak:[390,
+  695],
+  Heshbon:[575,
+  430],
+  Bashan:[635,
+  230],
+  Sihon:[575,
+  430],
+  Og:[635,
+  230]
+};
+/* STAGE CONTENT: edit headings,
+summaries,
+facts,
+markers and routes here. */
+const stages=[
+ {
+  ch:'Joshua 1–5',
+  title:'The Land Before Israel',
+  summary:'Israel crosses the Jordan from Shittim, establishes a camp at Gilgal, and enters a land occupied by the seven peoples named in Joshua 3:10. Canaanite religion sought fertility, rain, crops and military success through many gods; Scripture also condemns its sexual immorality, divination and child sacrifice.',
+  facts:['<strong>Canaanites:</strong> both an umbrella term and, more narrowly, people of the coast, valleys and Jordan region. They worshiped a pantheon headed by El, with Baal as storm-and-fertility god and Asherah/Astarte as fertility goddesses. Cultic attempts to secure fertility included sexual rites. Scripture treats child sacrifice as one of the land’s abominations.',
+  '<strong>Hittites:</strong> a biblical hill-country population. The Anatolian Hittite world worshiped storm gods and a sun goddess, but the exact relationship between that empire and the biblical Hittites is debated. Scripture does not assign the biblical group a separate ritual system; it includes them within Canaan’s idolatrous culture.',
+  '<strong>Hivites:</strong> communities associated with Gibeon and the far north below Hermon. No distinct Hivite pantheon is recoverable; they appear to have shared the wider Canaanite religious world of local Baals and fertility worship.',
+  '<strong>Perizzites:</strong> a poorly identified population often associated with rural settlements in the central hills. Scripture gives no uniquely Perizzite deity or ritual; they are included collectively among the nations practicing Canaan’s forbidden worship.',
+  '<strong>Girgashites:</strong> the least-known of the seven. Scripture gives neither a secure homeland nor a distinct god or cult. Any more specific claim about their worship would be speculation.',
+  '<strong>Amorites:</strong> a broad ancient designation, associated in Joshua with hill-country kingdoms and Sihon east of the Jordan. Earlier Amorite peoples had varied Semitic gods; the biblical Amorites in Canaan participated in the broader Baal-and-Asherah religious environment. Genesis 15:16 speaks collectively of their mounting iniquity.',
+  '<strong>Jebusites:</strong> inhabitants of Jerusalem and its surrounding hills. Scripture names no uniquely Jebusite god. They belonged to the Canaanite religious setting, but later child sacrifice in the Valley of Hinnom must not automatically be projected backward onto every pre-Israelite Jebusite.',
+  '<strong>Shared practices condemned by Scripture:</strong> worship at high places and sacred poles, Baal and Asherah fertility religion, ritual sexual immorality, sorcery and divination, and burning sons and daughters as offerings. The evidence supports attributing these practices to Canaanite religion collectively—not claiming that every member of every group performed every rite.',
+  '<strong>Neighboring peoples:</strong> Amalek lived toward the Negeb; Moab and Ammon lay east of the Jordan. They were not among the seven nations. Moab’s national god was Chemosh; Ammon’s was Milcom/Molech, whose worship became associated with child sacrifice.',
+  '<strong>Transjordan kings defeated under Moses:</strong> Sihon at Heshbon and Og of Bashan.'],
+  note:'The religious summary follows conservative Protestant treatments of Deuteronomy 12 and 18, Leviticus 18 and 20, and the Baal/Asherah material in Judges and Kings. Where Scripture or archaeology cannot distinguish a group’s cult, the map says so.',
+  regions:[['CANAANITES',
+  255,
+  300],
+  ['HIVITES',
+  420,
+  120],
+  ['JEBUSITES',
+  330,
+  420],
+  ['AMORITES',
+  390,
+  535],
+  ['PERIZZITES',
+  365,
+  360],
+  ['HITTITES',
+  285,
+  570],
+  ['GIRGASHITES',
+  430,
+  275],
+  ['BASHAN',
+  620,
+  185],
+  ['AMMON',
+  650,
+  375],
+  ['MOAB',
+  625,
+  560],
+  ['AMALEK',
+  245,
+  675]],
+  marks:[['Shittim',
+  'city'],
+  ['Gilgal',
+  'city'],
+  ['Jericho',
+  'city'],
+  ['Jerusalem',
+  'city'],
+  ['Ebal',
+  'summary'],
+  ['Gerizim',
+  'summary'],
+  ['Sihon',
+  'summary'],
+  ['Og',
+  'summary']],
+  route:['Shittim',
+  'Jordan',
+  'Gilgal']
+},
+ {
+  ch:'Joshua 6–8',
+  title:'Jericho and Ai',
+  summary:'From the base at Gilgal, Israel takes Jericho, is repulsed at Ai after Achan’s sin, then captures Ai and renews the covenant at Mount Ebal.',
+  facts:['Jericho: the first fortified city encountered west of the Jordan.',
+  'Ai: first attack fails; the second uses an ambush.',
+  'Bethel: closely associated with Ai in the battle account.',
+  'Mount Ebal and Mount Gerizim: covenant blessing and curse are proclaimed.'],
+  note:'The precise location of Ai is debated; the marker uses a traditional atlas placement.',
+  marks:[['Gilgal',
+  'summary'],
+  ['Jericho',
+  'city'],
+  ['Ai',
+  'city uncertain'],
+  ['Bethel',
+  'summary'],
+  ['Ebal',
+  'summary'],
+  ['Gerizim',
+  'summary']],
+  route:['Gilgal',
+  'Jericho',
+  'Gilgal',
+  'Ai',
+  'Ebal']
+},
+ {
+  ch:'Joshua 9',
+  title:'The Gibeonite Treaty',
+  summary:'The Gibeonites secure a treaty with Israel by presenting themselves as travelers from a distant country.',
+  facts:['Gibeon: chief city of the treaty group.',
+  'Chephirah, Beeroth and Kiriath-jearim: the other Gibeonite towns.',
+  'Hivites: Joshua 9:7 identifies the treaty-makers with this people.',
+  'Gilgal: Israel’s camp, where the envoys meet Joshua and the leaders.'],
+  note:'This stage changes from battle movement to the geography of a covenant made by deception.',
+  marks:[['Gilgal',
+  'summary'],
+  ['Gibeon',
+  'ally'],
+  ['Chephirah',
+  'ally'],
+  ['Beeroth',
+  'ally'],
+  ['KiriathJearim',
+  'ally']],
+  route:['Gilgal',
+  'Gibeon']
+},
+ {
+  ch:'Joshua 10',
+  title:'The Southern Campaign',
+  summary:'Five Amorite kings attack Gibeon. Joshua marches from Gilgal, defeats the coalition, and continues through the southern hill country and Shephelah.',
+  facts:['Coalition: Adoni-zedek of Jerusalem, Hoham of Hebron, Piram of Jarmuth, Japhia of Lachish and Debir of Eglon.',
+  'Pursuit: Gibeon through Beth-horon toward Azekah and Makkedah.',
+  'Campaign cities: Makkedah, Libnah, Lachish, Eglon, Hebron and Debir.',
+  'Horam king of Gezer comes to aid Lachish and is defeated.'],
+  note:'The route condenses successive movements narrated in Joshua 10.',
+  marks:[['Gilgal',
+  'summary'],
+  ['Gibeon',
+  'ally'],
+  ['Jerusalem',
+  'city'],
+  ['Hebron',
+  'city'],
+  ['Jarmuth',
+  'city'],
+  ['Lachish',
+  'city'],
+  ['Eglon',
+  'city'],
+  ['BethHoron',
+  'summary'],
+  ['Azekah',
+  'summary'],
+  ['Makkedah',
+  'city'],
+  ['Libnah',
+  'city'],
+  ['Gezer',
+  'city'],
+  ['Debir',
+  'city']],
+  route:['Gilgal',
+  'Gibeon',
+  'BethHoron',
+  'Azekah',
+  'Makkedah',
+  'Libnah',
+  'Lachish',
+  'Eglon',
+  'Hebron',
+  'Debir']
+},
+ {
+  ch:'Joshua 11',
+  title:'The Northern Campaign',
+  summary:'Jabin of Hazor gathers a northern coalition. Joshua surprises the armies at the Waters of Merom, pursues them, and burns Hazor.',
+  facts:['Jabin of Hazor leads; Jobab of Madon and the kings of Shimron and Achshaph join him.',
+  'Other groups named: Canaanites, Amorites, Hittites, Perizzites, Jebusites and Hivites.',
+  'Battle: Waters of Merom; pursuit toward Great Sidon, Misrephoth-maim and the Valley of Mizpah.',
+  'Hazor alone is explicitly said to be burned among the mound cities.'],
+  note:'Madon, Achshaph, Misrephoth-maim and the land of Mizpah have disputed identifications.',
+  marks:[['Hazor',
+  'city'],
+  ['Madon',
+  'city uncertain'],
+  ['Shimron',
+  'city uncertain'],
+  ['Achshaph',
+  'city uncertain'],
+  ['Merom',
+  'summary uncertain'],
+  ['Sidon',
+  'summary'],
+  ['Misrephoth',
+  'summary uncertain'],
+  ['Dor',
+  'summary'],
+  ['Mizpah',
+  'summary uncertain'],
+  ['Hermon',
+  'summary']],
+  route:['Gilgal',
+  'Merom',
+  'Sidon'],
+  routeClass:'north'
+},
+ {
+  ch:'Joshua 12',
+  title:'The Roll of Defeated Kings',
+  summary:'The narrative pauses to remember the kings defeated under Moses east of the Jordan and under Joshua from the Negeb to the far north.',
+  facts:['East of Jordan under Moses: Sihon king of the Amorites and Og king of Bashan.',
+  'West of Jordan under Joshua: thirty-one kings are listed.',
+  'The list gathers the central, southern and northern victories into one geographic memorial.',
+  'Extent: from Mount Halak toward Seir to Baal-gad in the Valley of Lebanon.'],
+  note:'Some towns appear only in this summary and several locations are uncertain.',
+  marks:[['Heshbon',
+  'summary'],
+  ['Bashan',
+  'summary'],
+  ['Jericho',
+  'summary'],
+  ['Ai',
+  'summary uncertain'],
+  ['Jerusalem',
+  'summary'],
+  ['Hebron',
+  'summary'],
+  ['Jarmuth',
+  'summary'],
+  ['Lachish',
+  'summary'],
+  ['Eglon',
+  'summary'],
+  ['Gezer',
+  'summary'],
+  ['Debir',
+  'summary'],
+  ['Geder',
+  'summary uncertain'],
+  ['Hormah',
+  'summary'],
+  ['Arad',
+  'summary'],
+  ['Libnah',
+  'summary'],
+  ['Adullam',
+  'summary'],
+  ['Makkedah',
+  'summary'],
+  ['Bethel',
+  'summary'],
+  ['Tappuah',
+  'summary uncertain'],
+  ['Hepher',
+  'summary uncertain'],
+  ['Aphek',
+  'summary'],
+  ['Lasharon',
+  'summary uncertain'],
+  ['Madon',
+  'summary uncertain'],
+  ['Hazor',
+  'summary'],
+  ['Shimron',
+  'summary uncertain'],
+  ['Achshaph',
+  'summary uncertain'],
+  ['Taanach',
+  'summary'],
+  ['Megiddo',
+  'summary'],
+  ['Kedesh',
+  'summary'],
+  ['Jokneam',
+  'summary'],
+  ['Dor',
+  'summary'],
+  ['Tirzah',
+  'summary'],
+  ['BaalGad',
+  'summary'],
+  ['Halak',
+  'summary']],
+  route:['Halak',
+  'Jericho',
+  'Ebal',
+  'Hazor',
+  'BaalGad']
+},
+ {
+  ch:'Joshua 13:1–7',
+  title:'Land Still Unconquered',
+  summary:'Although the main campaigns were complete, the Lord names substantial territory still remaining: the Philistine and Geshurite south, Sidonian and Canaanite coastlands, the land of the Gebalites, and Lebanon to the approach of Hamath.',
+  facts:['<strong>Southern coast:</strong> the territories of Gaza, Ashdod, Ashkelon, Gath, and Ekron—the five Philistine rulers—from the Shihor toward Ekron.',
+  '<strong>Southern Geshurites and Avvim:</strong> peoples associated with the southwest; these are distinct from the Geshurite kingdom east of the Sea of Galilee.',
+  '<strong>Northern coast:</strong> Canaanite and Sidonian territory from Mearah toward Aphek and the Amorite border.',
+  '<strong>Far north:</strong> the land of the Gebalites, Lebanon from Baal-gad below Hermon to Lebo-hamath, and the Sidonian hill country to Misrephoth-maim.',
+  'The Lord promises to drive these peoples out and commands Joshua to include the land in Israel’s inheritance.'],
+  note:'The red washes indicate broad regions, not surveyed borders. Mearah, the Shihor, and several northern limits are debated; markers with dashed outlines are especially uncertain.',
+  areas:[ {
+    type:'ellipse',
+    cx:174,
+    cy:535,
+    rx:62,
+    ry:158
+  },
+   {
+    type:'ellipse',
+    cx:220,
+    cy:76,
+    rx:67,
+    ry:95
+  },
+   {
+    type:'ellipse',
+    cx:430,
+    cy:48,
+    rx:175,
+    ry:58
+  }],
+  regions:[['PHILISTINE TERRITORY',
+  112,
+  410],
+  ['GESHURITES',
+  120,
+  650],
+  ['SIDONIAN COAST',
+  170,
+  145],
+  ['LEBANON',
+  375,
+  35]],
+  marks:[['Shihor',
+  'unconquered uncertain'],
+  ['Gaza',
+  'unconquered'],
+  ['Ashdod',
+  'unconquered'],
+  ['Ashkelon',
+  'unconquered'],
+  ['Gath',
+  'unconquered'],
+  ['Ekron',
+  'unconquered'],
+  ['Sidon',
+  'unconquered'],
+  ['Mearah',
+  'unconquered uncertain'],
+  ['Aphek',
+  'unconquered'],
+  ['Gebal',
+  'unconquered'],
+  ['Misrephoth',
+  'unconquered uncertain'],
+  ['BaalGad',
+  'unconquered'],
+  ['Hermon',
+  'unconquered'],
+  ['LeboHamath',
+  'unconquered uncertain']]
+},
+ {
+  ch:'Joshua 13–19',
+  title:'The Tribal Allotments',
+  summary:'The conquered and promised land is apportioned among Israel. Joshua 13 records Reuben, Gad, and half-Manasseh east of the Jordan; chapters 14–15 turn to Caleb and Judah. Chapters 16–19 complete the western allotments shown here.',
+  facts:['<strong>East of Jordan:</strong> Reuben in the south, Gad in central Gilead, and half of Manasseh in northern Gilead and Bashan—inheritances assigned under Moses.',
+  '<strong>South and center:</strong> Judah receives the south; Simeon receives towns within Judah; Benjamin lies between Judah and Joseph, with Jerusalem on the Judah–Benjamin border.',
+  '<strong>House of Joseph:</strong> Ephraim and the western half of Manasseh occupy the central and north-central hill country.',
+  '<strong>North:</strong> Issachar, Zebulun, Asher, and Naphtali receive territories in and around Galilee and the Jezreel region.',
+  '<strong>Dan:</strong> the first allotment lies west of Benjamin; the later migration to Laish belongs to Judges 18.',
+  '<strong>Levi:</strong> receives no continuous tribal territory, but forty-eight cities with pasturelands distributed among the tribes (Joshua 21).'],
+  note:'These colored areas are teaching-level approximations, not precise boundary surveys. Jerusalem remained a Jebusite stronghold at this stage (Joshua 15:63).',
+  territories:[['ASHER',
+  '#7c9b65',
+  '150,55 280,60 300,185 165,230',
+  220,
+  135],
+  ['NAPHTALI',
+  '#7d8fb4',
+  '385,55 520,55 530,220 425,202',
+  457,
+  132],
+  ['ZEBULUN',
+  '#c28a66',
+  '275,145 392,142 424,197 328,208',
+  348,
+  177],
+  ['ISSACHAR',
+  '#d3b455',
+  '330,192 485,188 505,238 420,272 325,244',
+  418,
+  226],
+  ['W MANASSEH',
+  '#9b7aac',
+  '175,232 430,228 505,298 430,324 248,320',
+  345,
+  280],
+  ['EPHRAIM',
+  '#6d9f92',
+  '245,312 432,304 480,390 300,398',
+  365,
+  353],
+  ['DAN',
+  '#bf716b',
+  '140,390 300,390 330,472 135,505',
+  225,
+  445],
+  ['BENJAMIN',
+  '#d19c50',
+  '300,390 430,385 476,431 451,477 330,470',
+  393,
+  430],
+  ['JUDAH',
+  '#b7734d',
+  '130,450 350,440 466,470 470,590 390,710 88,710 110,560',
+  292,
+  535],
+  ['SIMEON',
+  '#d7ab79',
+  '150,590 330,582 360,690 108,705',
+  250,
+  642],
+  ['E MANASSEH',
+  '#779a78',
+  '520,42 710,35 700,300 520,300',
+  618,
+  180],
+  ['GAD',
+  '#a78b5d',
+  '505,296 650,290 690,462 520,478',
+  600,
+  375],
+  ['REUBEN',
+  '#a66e77',
+  '515,468 685,456 705,592 545,616',
+  620,
+  535]],
+  regions:[['LEVI · CITIES THROUGHOUT ISRAEL',
+  255,
+  375]],
+  marks:[['Jerusalem',
+  'city']]
+}
+];
+const $=s=>document.querySelector(s),
+ns='http://www.w3.org/2000/svg';
+let i=0;
+function el(tag,
+attrs,
+parent) {
+  const e=document.createElementNS(ns,
+  tag);
+  Object.entries(attrs|| {
+    
+  }).forEach(([k,
+  v])=>e.setAttribute(k,
+  v));
+  (parent||$('#map')).appendChild(e);
+  return e
+}
+function label(name) {
+  const special= {
+    Sihon:'Sihon · king at Heshbon',
+    Og:'Og · king of Bashan'
+  };
+  return special[name]||name.replace(/([a-z])([A-Z])/g,
+  '$1-$2')
+}
+function render() {
+  const s=stages[i];
+  $('#chapter').textContent=s.ch;
+  $('#stageTitle').textContent=s.title;
+  $('#summary').textContent=s.summary;
+  $('#facts').innerHTML=s.facts.map(x=>'<li>'+x+'</li>').join('');
+  $('#note').textContent=s.note;
+  $('#progress').textContent=`Stage ${i+1} of ${stages.length}`;
+  $('#back').disabled=i===0;
+  $('#next').textContent=i===stages.length-1?'Start over ↻':'Next →';
+  ['territories',
+  'regions',
+  'routes',
+  'markers'].forEach(id=>$('#'+id).innerHTML='');
+  (s.areas||[]).forEach(a=>el(a.type||'ellipse',
+   {
+    ...a,
+    class:'area'
+  },
+  $('#territories')));
+  (s.territories||[]).forEach(([name,
+  color,
+  points,
+  x,
+  y])=> {
+    el('polygon',
+     {
+      points, class:'territory', style:`--fill:${color}`
+    },
+    $('#territories'));
+    const tx=el('text',
+     {
+      x, y, class:'territory-label'
+    },
+    $('#territories'));
+    tx.textContent=name
+  });
+  (s.regions||[]).forEach(([t,
+  x,
+  y])=> {
+    const g=el('g',
+     {
+      class:'region'
+    },
+    $('#regions'));
+    const tx=el('text',
+     {
+      x, y
+    },
+    g);
+    tx.textContent=t
+  });
+  if(s.route) {
+    const pts=s.route.map(n=>P[n].join(',')).join(' ');
+    el('polyline',
+     {
+      points:pts, class:'route '+(s.routeClass||'')
+    },
+    $('#routes'))
+  }
+  (s.marks||[]).forEach(([n,
+  c])=> {
+    const [x,
+    y]=P[n],
+    g=el('g',
+     {
+      class:'marker '+c
+    },
+    $('#markers'));
+    el('circle',
+     {
+      cx:x, cy:y, r:c.includes('summary')?5:7
+    },
+    g);
+    const tx=el('text',
+     {
+      x:x+10, y:y+4
+    },
+    g);
+    tx.textContent=label(n)
+  });
+  $('#legend').innerHTML=s.territories?'<span class="key"><i class="swatch gold"></i>Approximate allotment</span><span class="key"><i class="swatch"></i>Jerusalem</span>':s.areas?'<span class="key"><i class="swatch"></i>Still unconquered</span><span class="key">Dashed = uncertain</span>':'<span class="key"><i class="swatch"></i>Campaign</span><span class="key"><i class="swatch gold"></i>Allied / treaty</span><span class="key"><i class="swatch green"></i>Summary</span>';
+  document.querySelectorAll('.dot').forEach((d,
+  j)=>d.classList.toggle('active',
+  j===i));
+  
+}
+stages.forEach((_,
+j)=> {
+  const b=document.createElement('button');
+  b.className='dot';
+  b.setAttribute('aria-label',
+  'Go to stage '+(j+1));
+  b.onclick=()=> {
+    i=j;
+    render()
+  };
+  $('#dots').appendChild(b)
+});
+$('#back').onclick=()=> {
+  if(i>0) {
+    i--;
+    render()
+  }
+};
+$('#next').onclick=()=> {
+  i=(i+1)%stages.length;
+  render()
+};
+document.addEventListener('keydown',
+e=> {
+  if(e.key==='ArrowRight')$('#next').click();
+  if(e.key==='ArrowLeft')$('#back').click()
+});
+const modal=$('#modal');
+const sourceIntro=$('#modal .modal-card p');
+sourceIntro.textContent='The plotted sequence and names follow Joshua 1–19. Geographic placement was cross-checked against BibleMapper’s campaign and tribal-boundary maps, BiblePlaces’ Joshua studies, and standard historical-geography identifications. Dashed marker outlines indicate especially uncertain locations; territorial borders are schematic.';
+const sourceList=$('#modal ul');
+sourceList.insertAdjacentHTML('afterbegin',
+'<li>Joshua 13:1–7: regions still unconquered</li><li>Joshua 13–19: tribal allotments; chapters 13–15 narrate the eastern inheritance, Caleb, and Judah</li>');
+$('#sourcesBtn').onclick=()=> {
+  modal.classList.add('open');
+  $('#close').focus()
+};
+$('#close').onclick=()=>modal.classList.remove('open');
+modal.onclick=e=> {
+  if(e.target===modal)modal.classList.remove('open')
+};
+document.addEventListener('keydown',
+e=> {
+  if(e.key==='Escape')modal.classList.remove('open')
+});
+render();
+</script>
+</body></html>
